@@ -1,0 +1,7 @@
+The fonts Swansea and Swansea BOLD were taken from https://www.fontspace.com/roger-white/swansea and is made available
+there under a public domain license.
+
+epd4in2bc.py and epdconfig.py were modified slightly but are mainly taken from waveshare's free libraries and examples
+
+A small part of TextWrapper.py was based around some code from a public license github account which I have lost. If
+this is your code, thank you very much! Please send me a link to your github account so I can properly attribute you.
