@@ -21,4 +21,5 @@ determine if a torrent is not paused/complete. Otherwise the percentage is used 
 in progress.
 '
 
+set -euf -o pipefail
 transmission-remote -n "$1:$2" -l | awk '{print $2, $(NF-1), $NF}' | awk 'NR>2 {print last} {last=$0}'

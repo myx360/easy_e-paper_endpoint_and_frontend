@@ -2,6 +2,7 @@ import subprocess
 import logging
 
 from Definitions import Definitions
+from Exceptions.ScriptFailureError import ScriptFailureError
 
 
 class Torrent(object):
@@ -70,8 +71,10 @@ class TorrentDataManager(object):
         process = subprocess.run(self.__bash_command.split(), stdout=subprocess.PIPE)
         self.__return_code = process.returncode
         if self.__return_code is not 0:
-            raise Exception('Failed to get torrents via CLI, return code was {}. Try running the scripts/get_torrent_data.sh script to check it\'s working'
-                            .format(self.__return_code))
+            error_msg = 'Failed to get torrents via CLI, return code was {}. Try running the scripts/get_torrent_data.sh script to check it\'s working'\
+                .format(self.__return_code)
+            logging.error(error_msg)
+            raise ScriptFailureError(error_msg)
         self.__output = process.stdout.decode('ascii')
 
     def get_torrents(self):

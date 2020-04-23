@@ -1,3 +1,6 @@
+Copy of the waveshare copyright blurb to accompany epd code used in this project:
+
+
 /******************************************************************************
  * File Name          : readme.txt
  * Description        : Readme file

@@ -5,6 +5,8 @@ from PIL import ImageFont
 class Definitions(object):
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+    CONFIG_FILE_PATH = os.path.join(ROOT_DIR, 'config.yml')
+
     GET_TORRENT_SCRIPT = 'get_torrent_data.sh'
     GET_TORRENT_SCRIPT_PATH = os.path.join(ROOT_DIR, 'scripts', GET_TORRENT_SCRIPT)
 
