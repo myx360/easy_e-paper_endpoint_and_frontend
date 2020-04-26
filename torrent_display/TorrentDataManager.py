@@ -2,7 +2,7 @@ import subprocess
 import logging
 
 from Definitions import Definitions
-from Exceptions.ScriptFailureError import ScriptFailureError
+from exceptions.ScriptFailureError import ScriptFailureError
 
 
 class Torrent(object):
@@ -63,11 +63,9 @@ class TorrentDataManager(object):
         self.__password = password
         self.torrents = {}
         self.__return_code = -1
-        self.__output = ''
         self.__bash_command = Definitions.GET_TORRENT_SCRIPT_PATH + ' {0} {1}'.format(username, password)
-        logging.debug(self.__bash_command)
 
-    def fetch_torrent_data(self):
+    def __fetch_torrent_data(self):
         process = subprocess.run(self.__bash_command.split(), stdout=subprocess.PIPE)
         self.__return_code = process.returncode
         if self.__return_code is not 0:
@@ -75,12 +73,12 @@ class TorrentDataManager(object):
                 .format(self.__return_code)
             logging.error(error_msg)
             raise ScriptFailureError(error_msg)
-        self.__output = process.stdout.decode('ascii')
+        return process.stdout.decode('ascii')
 
-    def get_torrents(self):
+    def __build_torrents_object(self, data):
         rows = [
             [w.strip() for w in l.split(' ') if w]
-            for l in self.__output.split('\n') if l
+            for l in data.split('\n') if l
         ]
 
         torrents_list = [Torrent(row[2], row[0], row[1]) for row in rows]
@@ -97,3 +95,6 @@ class TorrentDataManager(object):
 
         return self.torrents
 
+    def get_torrents(self):
+        data = self.__fetch_torrent_data()
+        return self.__build_torrents_object(data)

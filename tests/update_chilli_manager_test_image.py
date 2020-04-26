@@ -2,13 +2,13 @@ import os
 
 from PIL import ImageFont
 
-from ChilliGardenImageManager import ChilliGardenImageManager
+from torrent_display.ChilliGardenImageManager import ChilliGardenImageManager
 from Definitions import Definitions
 
 
 try:
-    __reference_path_b = os.path.join(Definitions.ROOT_DIR, 'test_images', 'test_chilli_reference_image_black.png')
-    __reference_path_c = os.path.join(Definitions.ROOT_DIR, 'test_images', 'test_chilli_reference_image_colour.png')
+    __reference_path_b = os.path.join(Definitions.ROOT_DIR, 'tests', 'test_images', 'test_chilli_reference_image_black.png')
+    __reference_path_c = os.path.join(Definitions.ROOT_DIR, 'tests', 'test_images', 'test_chilli_reference_image_colour.png')
 
     if os.path.exists(__reference_path_b):
         os.remove(__reference_path_b)
@@ -27,7 +27,7 @@ try:
     chilli_manager.add_torrent('yet_another_torrent_s01e05.avi', 100)
     chilli_manager.add_torrent('collection_of_free_classic_games.zip', 100)
     chilli_manager.add_torrent('yet_another_veryveryveryveryveryveryveryveryveryvery_longlonglong_namename_is_here_dont_wait_for_me_to_stop.avi', 100)
-    chilli_manager.print_torrents_list()
+    chilli_manager.generate_display_image()
     chilli_manager.get_black_image().save(__reference_path_b)
     chilli_manager.get_colour_image().save(__reference_path_c)
 

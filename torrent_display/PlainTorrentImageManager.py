@@ -1,7 +1,7 @@
 import copy
 
 from Images import Images
-from TorrentListPrinter import TorrentListPrinter
+from torrent_display.TorrentListImagePaster import TorrentListImagePaster
 
 
 class PlainTorrentImageManager(object):
@@ -16,15 +16,15 @@ class PlainTorrentImageManager(object):
         self.__background = Images.epaper_plain_background
         self.font = font_text
         self.font_bold = font_text if font_title is None else font_title
-        self.__list_printer = TorrentListPrinter(self.__epaper_image,
-                                                 self.torrent_list_xy,
-                                                 self.line_width,
-                                                 self.line_height,
-                                                 font_text,
-                                                 font_title)
+        self.__list_printer = TorrentListImagePaster(self.__epaper_image,
+                                                     self.torrent_list_xy,
+                                                     self.line_width,
+                                                     self.line_height,
+                                                     font_text,
+                                                     font_title)
 
-    def print_torrents_list(self):
-        self.__list_printer.print(self.__epaper_image)
+    def generate_display_image(self):
+        self.__list_printer.paste_image()
 
     def get_black_image(self):
         return self.__epaper_image.image_black
@@ -34,8 +34,8 @@ class PlainTorrentImageManager(object):
 
     def reset_image_to_background(self):
         self.__epaper_image = copy.deepcopy(self.__background)
-        self.__list_printer = TorrentListPrinter(self.__epaper_image, self.torrent_list_xy,
-                                                 self.line_width, self.line_height, self.font)
+        self.__list_printer = TorrentListImagePaster(self.__epaper_image, self.torrent_list_xy,
+                                                     self.line_width, self.line_height, self.font)
 
     def add_torrent(self, text, percentage=None):
         """ Only adds torrents to the list if there is space on the display.

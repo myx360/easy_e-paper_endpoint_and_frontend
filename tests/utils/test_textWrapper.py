@@ -2,7 +2,7 @@ import unittest
 from PIL import ImageFont
 
 from Definitions import Definitions
-import TextWrapper
+from utils import TextWrapper
 
 
 class TestTextWrapper(unittest.TestCase):

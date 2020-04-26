@@ -1,11 +1,10 @@
 from abc import abstractmethod
-import EpaperImage
 
 
-class Printer(object):
+class ImagePaster(object):
     @abstractmethod
-    def print(self, epaper_image: EpaperImage):
-        """Pastes an image onto the supplied epaper_image"""
+    def paste_image(self):
+        """Pastes an image on top of the supplied epaper_image"""
 
     @abstractmethod
     def size(self):

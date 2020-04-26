@@ -2,13 +2,13 @@ import numpy
 from PIL import Image, ImageDraw
 
 from EpaperImage import EpaperImage
-from PercentPrinter import PercentPrinter
-from Printer import Printer
-from TextWrapper import TextWrapper
+from torrent_display.PercentImagePaster import PercentImagePaster
+from ImagePaster import ImagePaster
+from utils.TextWrapper import TextWrapper
 
 
 class TorrentList(object):
-    def __init__(self, max_size):
+    def __init__(self, max_size: int):
         self.max_size = max_size
         self.height = 0
         self.size = (max_size[0], self.height)
@@ -23,8 +23,8 @@ class TorrentList(object):
         return False
 
 
-class TorrentListPrinter(Printer):
-    def __init__(self, epaper_image, xy, line_width, line_height, font_text, font_title):
+class TorrentListImagePaster(ImagePaster):
+    def __init__(self, epaper_image: EpaperImage, xy, line_width: int, line_height: int, font_text, font_title):
         max_size_of_list = (line_width, numpy.subtract(epaper_image.size, xy)[1])
         self.torrent_list = TorrentList(max_size_of_list)
         self.epaper_image = epaper_image
@@ -37,8 +37,8 @@ class TorrentListPrinter(Printer):
     def size(self):
         return self.torrent_list.size
 
-    def print(self, epaper_image: EpaperImage):
-        epaper_image.paste(self.torrent_list.list_image, self.__top_left)
+    def paste_image(self):
+        self.epaper_image.paste(self.torrent_list.list_image, self.__top_left)
 
     def add_torrent(self, text: str, percentage: float = None, font=None, line_height=None):
         if font is None:
@@ -47,12 +47,12 @@ class TorrentListPrinter(Printer):
             line_height = self.__line_height
         blank_image = Image.new('1', (self.__line_width, line_height), 255)
         line_image = EpaperImage(blank_image, blank_image)
-        xy = (1, 0)  # get from percent_image
+        xy = (1, 0)  # get from percent image
 
         if percentage is not None:
-            percent_printer = PercentPrinter(self.epaper_image, xy, percentage)
-            percent_printer.print(line_image)
-            xy = (percent_printer.size()[0] + 5, 4)
+            percent_paster = PercentImagePaster(line_image, xy, percentage)
+            percent_paster.paste_image()
+            xy = (percent_paster.size()[0] + 5, 4)
 
         self.draw_text_image(line_image, text, font, xy)
         return self.torrent_list.add_item_to_list(line_image)
@@ -74,7 +74,7 @@ class TorrentListPrinter(Printer):
         self.draw_text_image(line_image, text, font, xy)
         return self.torrent_list.add_item_to_list(line_image)
 
-    def draw_text_image(self, line_image, text, font, xy):
+    def draw_text_image(self, line_image: EpaperImage, text: str, font, xy):
         max_text_width = self.__line_width - xy[0]
         draw = ImageDraw.Draw(line_image.image_black)
         wrapper = TextWrapper(text, font, max_text_width)

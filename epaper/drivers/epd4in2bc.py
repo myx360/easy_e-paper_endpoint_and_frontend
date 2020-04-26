@@ -28,9 +28,10 @@
 #
 
 import logging
-import epdconfig
 
 # Display resolution
+from epaper.drivers import epdconfig
+
 EPD_WIDTH = 400
 EPD_HEIGHT = 300
 

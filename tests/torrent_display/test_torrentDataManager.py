@@ -2,8 +2,8 @@ import os
 import unittest
 
 from Definitions import Definitions
-from Exceptions.ScriptFailureError import ScriptFailureError
-from TorrentDataManager import TorrentDataManager, Torrent, Torrents
+from exceptions.ScriptFailureError import ScriptFailureError
+from torrent_display.TorrentDataManager import TorrentDataManager, Torrent, Torrents
 
 
 class TestTorrentDataManager(unittest.TestCase):
@@ -20,7 +20,7 @@ class TestTorrentDataManager(unittest.TestCase):
     __FAKE_TORRENT_DATA_SCRIPT = os.path.join(Definitions.ROOT_DIR, 'scripts', 'fake_torrent_data.sh')
     __STANDARD_BASH_COMMAND = Definitions.GET_TORRENT_SCRIPT_PATH + ' {0} {1}'.format(__TEST_USER_NAME, __TEST_PASSWORD)
 
-    def setUp(self) -> None:
+    def setUp(self):
         self.torrent_data_manager = TorrentDataManager(self.__TEST_USER_NAME, self.__TEST_PASSWORD)
 
     def test_TorrentDataManager_init(self):
@@ -31,7 +31,6 @@ class TestTorrentDataManager(unittest.TestCase):
 
     def test_get_torrents_and_Torrents_equality(self):
         self.torrent_data_manager._TorrentDataManager__bash_command = self.__FAKE_TORRENT_DATA_SCRIPT
-        self.torrent_data_manager.fetch_torrent_data()
         result = self.torrent_data_manager.get_torrents()
 
         expected_result = Torrents()
@@ -48,7 +47,7 @@ class TestTorrentDataManager(unittest.TestCase):
 
     def test_get_torrents_fails(self):
         self.torrent_data_manager._TorrentDataManager__bash_command = self.__FAIL_SCRIPT
-        self.assertRaises(ScriptFailureError, self.torrent_data_manager.fetch_torrent_data)
+        self.assertRaises(ScriptFailureError, self.torrent_data_manager.get_torrents)
 
 
 if __name__ == '__main__':

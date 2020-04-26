@@ -6,108 +6,74 @@ import traceback
 import time
 import yaml
 
-import epd4in2bc
 
-from ChilliGardenImageManager import ChilliGardenImageManager
 from Definitions import Definitions
-from Exceptions.ScriptFailureError import ScriptFailureError
-from TorrentDataManager import TorrentDataManager
+from epaper.EpaperDisplay import EpaperDisplay
+from torrent_display.TorrentDisplayManager import TorrentDisplayManager
+
+CONFIG_FILE_HINT = '''
+
+Hint:- If running as a service, the config.yml file should be owned by root with 400 permissions and contain the following \
+(with <username> and <password> filled in)
+username: <username>
+password: <password>
+
+or else if running just as a script, run with:
+    python3 main.py <username> <password>
+'''
 
 
 class Main(object):
     def __init__(self, username, password):
-        self.__epd = epd4in2bc.EPD()
-        self.__torrent_data_manager = TorrentDataManager(username, password)
-        self.__torrent_data_manager.fetch_torrent_data()
-
-        self.__epd.init()
-        # Initial clear reduces the risk of damage to the e-paper:
-        self.__epd.Clear()
-        self.__epd.sleep()
-        self.__image_manager = ChilliGardenImageManager(Definitions.TEXT_FONT, Definitions.BOLD_FONT)
-        self.__refreshes = 0
-
-    def update_epaper_image(self, torrents):
-        image_manager = self.__image_manager
-        epd = self.__epd
-        image_manager.reset_image_to_background()
-
-        if len(torrents.downloading) > 0:
-            image_manager.add_title('Downloading:')
-            for torrent in torrents.downloading:
-                image_manager.add_torrent(torrent.name, float(torrent.percent.rstrip('%')))
-
-        if len(torrents.completed) > 0:
-            image_manager.add_title('Completed:')
-            for torrent in torrents.completed:
-                image_manager.add_torrent(torrent.name, float(torrent.percent.rstrip('%')))
-
-        if len(torrents.stopped) > 0:
-            image_manager.add_title('Stopped:')
-            for torrent in torrents.stopped:
-                image_manager.add_torrent(torrent.name, float(torrent.percent.rstrip('%')))
-
-        image_manager.print_torrents_list()
-
-        self.__refreshes += 1
-        epd.init()
-
-        if self.__refreshes > 5:
-            epd.Clear()
-            self.__refreshes = 0
-
-        epd.display(epd.getbuffer(image_manager.get_black_image()), epd.getbuffer(image_manager.get_colour_image()))
-        epd.sleep()
+        self.epd = EpaperDisplay()
+        self.torrent_display = TorrentDisplayManager(username, password)
 
     def start(self):
-        torrents = {}
+        display = self.torrent_display
+        epd = self.epd
 
         while True:
             try:
-                logging.debug('Attempting to fetch torrents...')
-                self.__torrent_data_manager.fetch_torrent_data()
-                latest_torrents = self.__torrent_data_manager.get_torrents()
-
-                if torrents != latest_torrents:
-                    logging.debug('New torrents found. Updating image')
-                    torrents = latest_torrents
-                    self.update_epaper_image(torrents)
-
+                if display.new_image_to_display():
+                    display.update_display(epd)
                 time.sleep(60)
 
             except KeyboardInterrupt:
                 logging.info('ctrl + c:')
-                self.__epd.full_exit()
+                epd.full_exit()
                 exit()
 
             # using bare except rather than except Exception to avoid any possibility of leaving
-            # the epd in full power mode. This is only acceptable because I exit the program here
+            # the epd in full power mode. This is acceptable because I exit the program here
             except:
                 logging.error('Error:')
                 logging.error(traceback.format_exc())
-                self.__epd.full_exit()
+                epd.full_exit()
                 exit(1)
 
 
-logging.basicConfig(level=logging.ERROR)
-
-username, password = sys.argv[1], sys.argv[2]
-
-if not username or not password:
+def get_transmission_login():
     try:
-        f = open(Definitions.CONFIG_FILE_PATH)
-        config = yaml.safe_load(f)
-        f.close()
-        username, password = config['username'], config['password']
-    except FileNotFoundError:
-        logging.error('Config file, config.yml not found. Stopping.')
-        exit(1)
-    except yaml.YAMLError as e:
-        logging.error('''Error reading the config.yml file. Stopping.
-(Hint - The config.yml file should contain only the following (with username/password filled in)
-username:
-password:''')
-        exit(1)
-main = Main(username, password)
-main.start()
+        return sys.argv[1], sys.argv[2]
+    except IndexError:
+        try:
+            with open(Definitions.CONFIG_FILE_PATH) as f:
+                config = yaml.safe_load(f)
+            return config['username'], config['password']
+        except FileNotFoundError:
+            logging.error('Config file, config.yml not found. Stopping.')
+            exit(1)
+        except yaml.YAMLError as yaml_error:
+            logging.error('Error reading the config.yml file. Stopping.' + CONFIG_FILE_HINT)
+            logging.debug('Error reading config.yml file: %s', str(yaml_error))
+            exit(1)
+        except KeyError:
+            logging.error('Could not find the transmission login details, please put them in the config.yml file' + CONFIG_FILE_HINT)
+            exit(1)
 
+
+logging.basicConfig(level=logging.INFO)
+
+transmission_user, transmission_pass = get_transmission_login()
+main = Main(transmission_user, transmission_pass)
+main.start()

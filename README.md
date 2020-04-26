@@ -37,8 +37,8 @@ following the instructions, then enable the service.
     sudo systemctl enable epaper_display
 
 ##Disclaimer:
-1. This script stores your username and password to the transmission daemon in a config file, config.yml
-in order to use those details when polling the transmission daemon. This file should be left only readable by
-root, and obviously will be readable by the root user no matter what, so don't re-use this password. I
-accept no responsibility for any risks caused by or associated with this. Some encryption may come in a future
-release, but even then any user with root access will be able to decrypt it.
+1. The install_as_a_service script stores your username and password to the transmission daemon in a config file,
+config.yml in order to use those details when polling the transmission daemon. This file should be left only readable by
+root, and obviously will be readable by the root user no matter what, so don't re-use this password. I accept no
+responsibility for any risks caused by or associated with this. Some encryption may come in a future release, but even
+then any user with root access will be able to decrypt it.

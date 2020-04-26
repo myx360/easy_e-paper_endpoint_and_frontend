@@ -2,13 +2,13 @@ import os
 
 from PIL import ImageFont
 
-from PlainTorrentImageManager import PlainTorrentImageManager
+from torrent_display.PlainTorrentImageManager import PlainTorrentImageManager
 from Definitions import Definitions
 
 
 try:
-    __reference_path_b = os.path.join(Definitions.ROOT_DIR, 'test_images', 'test_plain_reference_image_black.png')
-    __reference_path_c = os.path.join(Definitions.ROOT_DIR, 'test_images', 'test_plain_reference_image_colour.png')
+    __reference_path_b = os.path.join(Definitions.ROOT_DIR, 'tests', 'test_images', 'test_plain_reference_image_black.png')
+    __reference_path_c = os.path.join(Definitions.ROOT_DIR, 'tests', 'test_images', 'test_plain_reference_image_colour.png')
 
     if os.path.exists(__reference_path_b):
         os.remove(__reference_path_b)
@@ -27,7 +27,7 @@ try:
     plain_manager.add_torrent('yet_another_torrent_s01e05.avi', 100)
     plain_manager.add_torrent('collection_of_free_classic_games.zip', 100)
     plain_manager.add_torrent('yet_another_veryveryveryveryveryveryveryveryveryvery_longlonglong_namename_is_here_dont_wait_for_me_to_stop.avi', 100)
-    plain_manager.print_torrents_list()
+    plain_manager.generate_display_image()
     plain_manager.get_black_image().save(__reference_path_b)
     plain_manager.get_colour_image().save(__reference_path_c)
 
