@@ -4,7 +4,7 @@
 
 ![](images/torrent_box_demo.jpg)
 
-##Pre-requisites:
+## Pre-requisites:
 
 Requires the user to have set up their wave-share 4.2 inch b/c module with a Raspberry pi with python3 following the
 guides under the resources tab here:
@@ -16,9 +16,9 @@ instruction above**
 Also requires transmission to have been set up on the local machine with the network UI like here: 
 https://pimylifeup.com/raspberry-pi-transmission/
 
-##Installation:
+## Installation:
 1. Follow the steps above to install transmission and get the waveshare epaper demo running
-2. Clone this repo\
+2. Clone this repo
     ```bash
     git clone https://github.com/myx360/torrent_box_epaper_display.git
 3. Go to the within the project directory run
@@ -36,7 +36,7 @@ following the instructions, then enable the service.
     sudo ./install_as_a_service.sh
     sudo systemctl enable epaper_display
 
-##Disclaimer:
+## Disclaimer:
 1. The install_as_a_service script stores your username and password to the transmission daemon in a config file,
 config.yml in order to use those details when polling the transmission daemon. This file should be left only readable by
 root, and obviously will be readable by the root user no matter what, so don't re-use this password. I accept no
