@@ -2,14 +2,16 @@ import unittest
 import sys
 from unittest.mock import patch, MagicMock, call
 
-from torrent_display.TorrentDataManager import Torrent, Torrents
+from EpaperImage import EpaperImage
+from Images import Images
 
 sys.modules['epaper.EpaperDisplay'] = MagicMock()  # prevents failures on TorrentDisplayManager import in dev testing
 
 # Must appear below EpaperDisplay mock:
-from torrent_display.ChilliGardenImageManager import ChilliGardenImageManager
-from torrent_display.PlainTorrentImageManager import PlainTorrentImageManager
-from torrent_display.TorrentDisplayManager import TorrentDisplayManager
+from display__torrents.ChilliGardenImageManager import ChilliGardenImageManager
+from display__torrents.PlainTorrentImageManager import PlainTorrentImageManager
+from display__torrents.TorrentDataManager import Torrent, Torrents
+from display__torrents.TorrentDisplayManager import TorrentDisplayManager
 
 
 class TestTorrentDisplayManager(unittest.TestCase):
@@ -40,7 +42,7 @@ class TestTorrentDisplayManager(unittest.TestCase):
         class_under_test = TorrentDisplayManager(self.__TEST_USERNAME, self.__TEST_PASSWORD, chilli_mode=False)
         self.assertIsInstance(class_under_test._TorrentDisplayManager__image_manager, PlainTorrentImageManager)
 
-    @patch('torrent_display.TorrentDisplayManager.TorrentDataManager')
+    @patch('display__torrents.TorrentDisplayManager.TorrentDataManager')
     def test_new_image_to_display(self, mock_data_manager):
         dm_instance = MagicMock()
         dm_instance.get_torrents.return_value = self.__TEST_TORRENTS_1
@@ -54,20 +56,20 @@ class TestTorrentDisplayManager(unittest.TestCase):
         dm_instance.get_torrents.return_value = self.__TEST_TORRENTS_2
         self.assertFalse(class_under_test.new_image_to_display(), 'same dataset should not trigger new_image_to_display')
 
-    @patch('torrent_display.TorrentDisplayManager.ChilliGardenImageManager', autospec=True)
+    @patch('display__torrents.TorrentDisplayManager.ChilliGardenImageManager', autospec=True)
     def test_update_display(self, mock_image_manager):
         mock, mock_im_instance, mock_epd = MagicMock(), MagicMock(), MagicMock()
         mock.im_instance, mock.epd = mock_im_instance, mock_epd
 
         mock_image_manager.return_value = mock_im_instance
-        mock_im_instance.get_black_image.return_value = 'black_image'
-        mock_im_instance.get_colour_image.return_value = 'colour_image'
+        test_epaper_image = EpaperImage(Images.epaper_00pc, Images.epaper_00pc)
+        mock_im_instance.generate_display_image.return_value = test_epaper_image
 
         class_under_test = TorrentDisplayManager(self.__TEST_USERNAME, self.__TEST_PASSWORD, chilli_mode=True)
         class_under_test._TorrentDisplayManager__torrents = self.__TEST_TORRENTS_2
         class_under_test.update_display(mock_epd)
 
-        mock.assert_has_calls([call.im_instance.reset_image_to_background(),
+        mock.assert_has_calls([call.im_instance.reset_to_background(),
                                call.im_instance.add_title('Downloading:'),
                                call.im_instance.add_torrent('torrent4', 50.0),
                                call.im_instance.add_title('Completed:'),
@@ -75,9 +77,7 @@ class TestTorrentDisplayManager(unittest.TestCase):
                                call.im_instance.add_title('Stopped:'),
                                call.im_instance.add_torrent('torrent3', 33.0),
                                call.im_instance.generate_display_image(),
-                               call.im_instance.get_black_image(),
-                               call.im_instance.get_colour_image(),
-                               call.epd.safe_display('black_image', 'colour_image')])
+                               call.epd.safe_display(test_epaper_image)])
 
 
 if __name__ == '__main__':

@@ -1,11 +1,11 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 
 class _WrappedLine(object):
     """Holder class for a wrapped line. Will only append text if it fits within line width.
     """
 
-    def __init__(self, font, max_width, adding_whole_words=True):
+    def __init__(self, font: ImageFont, max_width: int, adding_whole_words: bool = True):
         self.__wrapped_line = ''
         self.__font = font
         self.__max_width = max_width
@@ -17,13 +17,13 @@ class _WrappedLine(object):
             )
         )
 
-    def _get_text_width(self, text):
+    def _get_text_width(self, text: str):
         return self.__draw.textsize(
             text=text,
             font=self.__font
         )[0]
 
-    def append_if_fits(self, text_to_add):
+    def append_if_fits(self, text_to_add: str):
         text_fit = False
         if self.__spaces_between_words and not self.is_empty():
             proposal = self.__wrapped_line + ' ' + text_to_add
@@ -80,7 +80,7 @@ class TextWrapper(object):
         self.__max_lines = max_lines
         self.__wrapped_lines = _WrappedLines(max_lines)
 
-    def __add_large_word(self, word):
+    def __add_large_word(self, word: str) -> str:
         """ Creates a wrapped line from words that are larger than one line
         :param word: word to add
         :return: returns the rest of the word that does not fit
@@ -93,7 +93,7 @@ class TextWrapper(object):
                 self.__wrapped_lines.add_line(wrapped_line)
                 return ''.join(characters[i:len(characters)])
 
-    def __add_word(self, wrapped_line, word):
+    def __add_word(self, wrapped_line: _WrappedLine, word: str):
         # word fits on line case
         if wrapped_line.append_if_fits(word):
             return wrapped_line
@@ -111,9 +111,9 @@ class TextWrapper(object):
             return wrapped_line
         return self.__add_word(_WrappedLine(self.__font, self.__max_width), word)
 
-    def generate_wrapped_text(self):
+    def generate_wrapped_text(self) -> str:
         """ Generates text wrapped to line width and within number of lines
-        :return: An array of lines that fit within box size for font and font size given
+        :return: An string filled of lines that fit within box size for font and font size given
         """
         for line in self.__text_lines:
             wrapped_line = _WrappedLine(self.__font, self.__max_width)

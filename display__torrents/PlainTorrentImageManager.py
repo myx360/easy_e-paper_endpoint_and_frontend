@@ -1,19 +1,24 @@
 import copy
 
+from PIL import ImageFont, Image
+
+from EpaperImage import EpaperImage
+from ImageManager import ImageManager
 from Images import Images
-from torrent_display.TorrentListImagePaster import TorrentListImagePaster
+from display__torrents.TorrentListImagePaster import TorrentListImagePaster
 
 
-class ChilliGardenImageManager(object):
-    """ Creates and manages the black and the colour images sent to waveshare colour e-paper 4.2 inch
+class PlainTorrentImageManager(ImageManager):
+    """ Creates and manages the black and the colour images for the torrent lists
+        on a plain background
     """
-    torrent_list_xy = (5, 35)
-    line_width = 300
+    torrent_list_xy = (5, 5)
+    line_width = 390
     line_height = 35
 
-    def __init__(self, font_text, font_title=None):
-        self.__epaper_image = copy.deepcopy(Images.epaper_chilli_background)
-        self.__background = Images.epaper_chilli_background
+    def __init__(self, font_text: ImageFont, font_title=None):
+        self.__epaper_image = copy.deepcopy(Images.epaper_plain_background)
+        self.__background = Images.epaper_plain_background
         self.font = font_text
         self.font_bold = font_text if font_title is None else font_title
         self.__list_printer = TorrentListImagePaster(self.__epaper_image,
@@ -23,21 +28,22 @@ class ChilliGardenImageManager(object):
                                                      font_text,
                                                      font_title)
 
-    def generate_display_image(self):
+    def generate_display_image(self, **kwargs) -> EpaperImage:
         self.__list_printer.paste_image()
+        return self.__epaper_image
 
-    def get_black_image(self):
+    def get_black_image(self) -> Image:
         return self.__epaper_image.image_black
 
-    def get_colour_image(self):
+    def get_colour_image(self) -> Image:
         return self.__epaper_image.image_colour
 
-    def reset_image_to_background(self):
+    def reset_to_background(self):
         self.__epaper_image = copy.deepcopy(self.__background)
         self.__list_printer = TorrentListImagePaster(self.__epaper_image, self.torrent_list_xy,
-                                                     self.line_width, self.line_height, self.font, self.font_bold)
+                                                     self.line_width, self.line_height, self.font)
 
-    def add_torrent(self, text, percentage=None):
+    def add_torrent(self, text: str, percentage: float = None):
         """ Only adds torrents to the list if there is space on the display.
         :param text: Text to display for list item.
         :param percentage: will not add the percentage icons if None supplied.
@@ -45,5 +51,5 @@ class ChilliGardenImageManager(object):
         """
         return self.__list_printer.add_torrent(text, percentage)
 
-    def add_title(self, text):
+    def add_title(self, text: str):
         return self.__list_printer.add_title(text)

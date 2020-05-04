@@ -2,14 +2,19 @@
 # -*- coding:utf-8 -*-
 import logging
 import sys
+import threading
 import traceback
 import time
+from flask import Flask, request
 import yaml
 
+from threading import Lock
 
 from Definitions import Definitions
+from DisplayManager import DisplayMode, DisplayManagerSwitcher
+from display__picture.PictureDisplayManager import PictureDisplayManager
 from epaper.EpaperDisplay import EpaperDisplay
-from torrent_display.TorrentDisplayManager import TorrentDisplayManager
+from display__torrents.TorrentDisplayManager import TorrentDisplayManager
 
 CONFIG_FILE_HINT = '''
 
@@ -24,19 +29,25 @@ or else if running just as a script, run with:
 
 
 class Main(object):
-    def __init__(self, username, password):
-        self.epd = EpaperDisplay()
-        self.torrent_display = TorrentDisplayManager(username, password)
+    def __init__(self, dm_holder: DisplayManagerSwitcher):
+        self.__epd = EpaperDisplay()
+        self.__dm_holder = dm_holder
+        self.last_image_displayed = None
 
-    def start(self):
-        display = self.torrent_display
-        epd = self.epd
+    def display_loop(self):
+        epd = self.__epd
 
         while True:
             try:
-                if display.new_image_to_display():
-                    display.update_display(epd)
-                time.sleep(60)
+                switching_manager = self.__dm_holder.has_mode_proposal()
+                display_manager = dm_switcher.get_manager()
+
+                if switching_manager:
+                    display_manager.new_image_to_display()
+                    display_manager.update_display(epd)
+                elif display_manager.new_image_to_display():
+                    self.last_image_displayed = display_manager.update_display(epd)
+                time.sleep(10)
 
             except KeyboardInterrupt:
                 logging.info('ctrl + c:')
@@ -48,6 +59,7 @@ class Main(object):
             except:
                 logging.error('Error:')
                 logging.error(traceback.format_exc())
+                logging.info('Safely stopping screen.')
                 epd.full_exit()
                 exit(1)
 
@@ -74,6 +86,39 @@ def get_transmission_login():
 
 logging.basicConfig(level=logging.INFO)
 
+switch_mode_lock = Lock()
+dm_switcher = DisplayManagerSwitcher(switch_mode_lock)
+
 transmission_user, transmission_pass = get_transmission_login()
-main = Main(transmission_user, transmission_pass)
-main.start()
+dm_switcher.register(TorrentDisplayManager(transmission_user, transmission_pass))
+
+image_lock = Lock()
+dm_switcher.register(PictureDisplayManager(image_lock))
+
+main = Main(dm_switcher)
+
+app = Flask(__name__)
+
+
+@app.route("/display_image", methods=['POST'])
+def display_image():
+    if request.files:
+        image = request.files["image_black"]
+        # propose new image to display manager
+        # todo: check file type
+        with image_lock:
+            image.save(Definitions.TEMP_IMAGE_BLACK)
+            dm_switcher.propose_mode(DisplayMode.IMAGE)
+        return "OK", 202
+    return "Bad request", 400
+
+
+@app.route("/torrents", methods=['POST'])
+def display_torrents():
+    dm_switcher.propose_mode(DisplayMode.TORRENTS)
+    return "OK", 202
+
+
+if __name__ == '__main__':
+    threading.Thread(target=app.run, args=("0.0.0.0", 5001), daemon=True).start()
+    main.display_loop()

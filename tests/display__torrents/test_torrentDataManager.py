@@ -3,7 +3,7 @@ import unittest
 
 from Definitions import Definitions
 from exceptions.ScriptFailureError import ScriptFailureError
-from torrent_display.TorrentDataManager import TorrentDataManager, Torrent, Torrents
+from display__torrents.TorrentDataManager import TorrentDataManager, Torrent, Torrents
 
 
 class TestTorrentDataManager(unittest.TestCase):

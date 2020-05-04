@@ -1,8 +1,8 @@
 import numpy
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 from EpaperImage import EpaperImage
-from torrent_display.PercentImagePaster import PercentImagePaster
+from display__torrents.PercentImagePaster import PercentImagePaster
 from ImagePaster import ImagePaster
 from utils.TextWrapper import TextWrapper
 
@@ -24,7 +24,12 @@ class TorrentList(object):
 
 
 class TorrentListImagePaster(ImagePaster):
-    def __init__(self, epaper_image: EpaperImage, xy, line_width: int, line_height: int, font_text, font_title):
+    def __init__(self,
+                 epaper_image: EpaperImage,
+                 xy, line_width: int,
+                 line_height: int,
+                 font_text: ImageFont,
+                 font_title: ImageFont):
         max_size_of_list = (line_width, numpy.subtract(epaper_image.size, xy)[1])
         self.torrent_list = TorrentList(max_size_of_list)
         self.epaper_image = epaper_image
@@ -40,7 +45,7 @@ class TorrentListImagePaster(ImagePaster):
     def paste_image(self):
         self.epaper_image.paste(self.torrent_list.list_image, self.__top_left)
 
-    def add_torrent(self, text: str, percentage: float = None, font=None, line_height=None):
+    def add_torrent(self, text: str, percentage: float = None, font: ImageFont = None, line_height: int = None):
         if font is None:
             font = self.__font_text
         if line_height is None:
@@ -57,7 +62,7 @@ class TorrentListImagePaster(ImagePaster):
         self.draw_text_image(line_image, text, font, xy)
         return self.torrent_list.add_item_to_list(line_image)
 
-    def add_title(self, text: str, font=None, line_height=None):
+    def add_title(self, text: str, font: ImageFont = None, line_height: int = None):
         if font is None:
             font = self.__font_title
         f_size_x, f_size_y = font.getsize(text)
@@ -74,7 +79,7 @@ class TorrentListImagePaster(ImagePaster):
         self.draw_text_image(line_image, text, font, xy)
         return self.torrent_list.add_item_to_list(line_image)
 
-    def draw_text_image(self, line_image: EpaperImage, text: str, font, xy):
+    def draw_text_image(self, line_image: EpaperImage, text: str, font: ImageFont, xy):
         max_text_width = self.__line_width - xy[0]
         draw = ImageDraw.Draw(line_image.image_black)
         wrapper = TextWrapper(text, font, max_text_width)

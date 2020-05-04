@@ -2,7 +2,7 @@ import os
 
 from PIL import ImageFont
 
-from torrent_display.ChilliGardenImageManager import ChilliGardenImageManager
+from display__torrents.ChilliGardenImageManager import ChilliGardenImageManager
 from Definitions import Definitions
 
 

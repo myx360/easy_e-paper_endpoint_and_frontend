@@ -2,7 +2,7 @@ import os
 
 from PIL import ImageFont
 
-from torrent_display.PlainTorrentImageManager import PlainTorrentImageManager
+from display__torrents.PlainTorrentImageManager import PlainTorrentImageManager
 from Definitions import Definitions
 
 

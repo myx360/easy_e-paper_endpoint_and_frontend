@@ -2,7 +2,8 @@ import os
 import unittest
 from PIL import Image
 
-from torrent_display.ChilliGardenImageManager import ChilliGardenImageManager
+from EpaperImage import EpaperImage
+from display__torrents.ChilliGardenImageManager import ChilliGardenImageManager
 from Definitions import Definitions
 
 
@@ -43,6 +44,12 @@ class TestChilliGardenImageManagerIntegration(unittest.TestCase):
         chilli_manager.get_colour_image().save(self.__test_image_path_c)
         self.assertTrue(self.images_equal_references(), "INTEGRATION TEST FAILURE: Chilli Manager test images do not match references")
 
+    def test_reset_to_background(self):
+        chilli_manager = ChilliGardenImageManager(Definitions.TEXT_FONT, Definitions.BOLD_FONT)
+        chilli_manager._ChilliGardenImageManager__epaper_image = EpaperImage()
+        chilli_manager.reset_to_background()
+        self.assertEqual(chilli_manager._ChilliGardenImageManager__background,
+                         chilli_manager._ChilliGardenImageManager__epaper_image)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,10 +1,11 @@
 import logging
 
-from DisplayManager import DisplayManager
-from torrent_display.ChilliGardenImageManager import ChilliGardenImageManager
+from DisplayManager import DisplayManager, DisplayMode
+from display__torrents.ChilliGardenImageManager import ChilliGardenImageManager
 from Definitions import Definitions
-from torrent_display.PlainTorrentImageManager import PlainTorrentImageManager
-from torrent_display.TorrentDataManager import TorrentDataManager, Torrents
+from display__torrents.PlainTorrentImageManager import PlainTorrentImageManager
+from display__torrents.TorrentDataManager import TorrentDataManager, Torrents
+from epaper.EpaperDisplay import EpaperDisplay
 
 
 class TorrentDisplayManager(DisplayManager):
@@ -16,9 +17,13 @@ class TorrentDisplayManager(DisplayManager):
         self.__torrents = Torrents()
         self.__torrent_data_manager = TorrentDataManager(username, password)
 
-    def update_display(self, epd):
+    @staticmethod
+    def get_mode():
+        return DisplayMode.TORRENTS
+
+    def update_display(self, epd: EpaperDisplay):
         image_manager = self.__image_manager
-        image_manager.reset_image_to_background()
+        image_manager.reset_to_background()
         torrents = self.__torrents
 
         if len(torrents.downloading) > 0:
@@ -36,9 +41,9 @@ class TorrentDisplayManager(DisplayManager):
             for torrent in torrents.stopped:
                 image_manager.add_torrent(torrent.name, float(torrent.percent.rstrip('%')))
 
-        image_manager.generate_display_image()
-
-        epd.safe_display(image_manager.get_black_image(), image_manager.get_colour_image())
+        image_to_display = image_manager.generate_display_image()
+        epd.safe_display(image_to_display)
+        return image_to_display
 
     def new_image_to_display(self):
         logging.debug('Attempting to fetch torrents...')

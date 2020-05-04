@@ -2,7 +2,7 @@ import os
 import unittest
 from PIL import Image
 
-from torrent_display.PlainTorrentImageManager import PlainTorrentImageManager
+from display__torrents.PlainTorrentImageManager import PlainTorrentImageManager
 from Definitions import Definitions
 
 
