@@ -4,6 +4,7 @@ import copy
 from PIL import Image
 
 from Definitions import Definitions
+from custom_errors.EpaperImageError import EpaperImageError
 
 
 class EpaperImage(object):
@@ -20,18 +21,18 @@ class EpaperImage(object):
     def paste_separate_images(self, black, colour, xy) -> EpaperImage:
         if black is not None:
             if self.image_black is None:
-                raise Exception('Tried to print to non-existent epaper image')
+                raise EpaperImageError('Tried to paste to non-existent e-paper image')
             self.image_black.paste(black, xy)
         if colour is not None:
             if self.image_colour is None:
-                raise Exception('Tried to print to non-existent epaper image')
+                raise EpaperImageError('Tried to paste to non-existent e-paper image')
             self.image_colour.paste(colour, xy)
         return self
 
     def paste(self, epaper_image, xy) -> EpaperImage:
         if isinstance(epaper_image, EpaperImage):
             return self.paste_separate_images(epaper_image.image_black, epaper_image.image_colour, xy)
-        raise Exception('Tried to paste something as an EpaperImage')
+        raise EpaperImageError('Tried to paste object as an EpaperImage')
 
     def __eq__(self, other):
         if isinstance(other, EpaperImage):

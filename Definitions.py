@@ -27,10 +27,12 @@ class Definitions(object):
     BACKGROUND_BLACK_FILEPATH = os.path.join(ROOT_DIR, 'images', 'chilli_torrent_box_B.bmp')
     BACKGROUND_COLOUR_FILEPATH = os.path.join(ROOT_DIR, 'images', 'chilli_torrent_box_C.bmp')
 
-    UPLOAD_FOLDER = os.path.join(ROOT_DIR, 'uploads')
-    TEMP_IMAGE_BLACK = os.path.join(ROOT_DIR, 'temp_black.png')
-    TEMP_IMAGE_COLOUR = os.path.join(ROOT_DIR, 'temp_colour.png')
-    READY_IMAGE_BLACK = os.path.join(ROOT_DIR, 'display_black.png')
-    READY_IMAGE_COLOUR = os.path.join(ROOT_DIR, 'display_colour.png')
+    UPLOAD_FOLDER = os.path.join(ROOT_DIR, 'uploaded_images')
+    TEMP_IMAGE_BLACK = os.path.join(UPLOAD_FOLDER, 'temp_black.png')
+    TEMP_IMAGE_COLOUR = os.path.join(UPLOAD_FOLDER, 'temp_colour.png')
+    TEMP_IMAGE_BLACK = os.path.join(UPLOAD_FOLDER, 'temp_black.png')
+    TEMP_IMAGE_COLOUR = os.path.join(UPLOAD_FOLDER, 'temp_colour.png')
+    READY_IMAGE_BLACK = os.path.join(UPLOAD_FOLDER, 'display_black.png')
+    READY_IMAGE_COLOUR = os.path.join(UPLOAD_FOLDER, 'display_colour.png')
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'bmp'}
     DISPLAY_SIZE = 400, 300

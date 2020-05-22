@@ -2,7 +2,7 @@ import os
 import unittest
 
 from Definitions import Definitions
-from exceptions.ScriptFailureError import ScriptFailureError
+from custom_errors.ScriptFailureError import ScriptFailureError
 from display__torrents.TorrentDataManager import TorrentDataManager, Torrent, Torrents
 
 

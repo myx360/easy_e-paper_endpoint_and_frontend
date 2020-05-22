@@ -13,11 +13,17 @@ class TestChilliGardenImageManagerIntegration(unittest.TestCase):
     __test_image_path_b = os.path.join(Definitions.ROOT_DIR, 'tests/test_images/test_chilli_image_black.png')
     __test_image_path_c = os.path.join(Definitions.ROOT_DIR, 'tests/test_images/test_chilli_image_colour.png')
 
-    def setUp(self):
+    def cleanup(self):
         if os.path.exists(self.__test_image_path_b):
             os.remove(self.__test_image_path_b)
         if os.path.exists(self.__test_image_path_c):
             os.remove(self.__test_image_path_c)
+
+    def setUp(self):
+        self.cleanup()
+
+    def tearDown(self):
+        self.cleanup()
 
     def images_equal_references(self):
         return Image.open(self.__reference_path_b, 'r') == Image.open(self.__test_image_path_b, 'r') and \
@@ -50,6 +56,7 @@ class TestChilliGardenImageManagerIntegration(unittest.TestCase):
         chilli_manager.reset_to_background()
         self.assertEqual(chilli_manager._ChilliGardenImageManager__background,
                          chilli_manager._ChilliGardenImageManager__epaper_image)
+
 
 if __name__ == '__main__':
     unittest.main()

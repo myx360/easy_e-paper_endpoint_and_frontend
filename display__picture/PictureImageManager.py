@@ -24,23 +24,26 @@ class PictureImageManager(ImageManager):
     def get_colour_image(self) -> Image:
         return self.__epaper_image.image_colour
 
+    def get_epaper_image(self) -> EpaperImage:
+        return self.__epaper_image
+
     def generate_display_image(self, black_image_path: str = None, colour_image_path: str = None) -> EpaperImage:
         if black_image_path:
-            self.__epaper_image.image_black = self._generate_image(black_image_path)
+            self.__epaper_image.image_black = self.__prepare_image_from_file(black_image_path)
         if colour_image_path:
-            self.__epaper_image.image_colour = self._generate_image(colour_image_path)
+            self.__epaper_image.image_colour = self.__prepare_image_from_file(colour_image_path)
 
         self.__epaper_image.image_black.save(Definitions.READY_IMAGE_BLACK)
         self.__epaper_image.image_colour.save(Definitions.READY_IMAGE_COLOUR)
         return self.__epaper_image
 
-    def _generate_image(self, image_path: str) -> Image:
+    def __prepare_image_from_file(self, image_path: str) -> Image:
         if os.path.isfile(image_path):
             image = Image.open(image_path)
-            return self.get_cropped_image(image).resize(self.size, Image.ANTIALIAS).convert('1')
+            return self.__get_cropped_image(image).resize(self.size, Image.ANTIALIAS).convert('1')
         raise FileNotFoundError("Could not find a file at %s", image_path)
 
-    def get_cropped_image(self, image) -> Image:
+    def __get_cropped_image(self, image) -> Image:
         width = image.size[0]
         height = image.size[1]
 

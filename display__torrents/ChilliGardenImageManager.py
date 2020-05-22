@@ -38,6 +38,9 @@ class ChilliGardenImageManager(ImageManager):
     def get_colour_image(self) -> Image:
         return self.__epaper_image.image_colour
 
+    def get_epaper_image(self) -> EpaperImage:
+        return self.__epaper_image
+
     def reset_to_background(self):
         self.__epaper_image = copy.deepcopy(self.__background)
         self.__list_printer = TorrentListImagePaster(self.__epaper_image, self.torrent_list_xy,

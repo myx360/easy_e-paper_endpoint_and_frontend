@@ -1,5 +1,6 @@
 import logging
 import threading
+import traceback
 
 from epaper.drivers import epd4in2bc
 from EpaperImage import EpaperImage
@@ -7,7 +8,7 @@ from Singleton import Singleton
 
 
 class EpaperDisplay(object, metaclass=Singleton):
-    """Wraps the display drivers with logic preventing unsafe behaviour. Probably overkill making it a singleton
+    """Wraps the display drivers with logic preventing unsafe behaviour.
     """
     def __init__(self):
         self.__lock = threading.Lock()
@@ -25,6 +26,7 @@ class EpaperDisplay(object, metaclass=Singleton):
                 self.__epd.sleep()
             except:
                 self.__epd.sleep()
+                logging.error('Exception raised whilst clearing screen: %s', traceback.format_exc())
                 raise
 
     def safe_display(self, epaper_image: EpaperImage):

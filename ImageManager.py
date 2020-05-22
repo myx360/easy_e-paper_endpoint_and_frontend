@@ -20,5 +20,9 @@ class ImageManager(object, metaclass=abc.ABCMeta):
         """"""
 
     @abc.abstractmethod
+    def get_epaper_image(self) -> EpaperImage:
+        """"""
+
+    @abc.abstractmethod
     def generate_display_image(self, args) -> EpaperImage:
         """returns the final generated image"""

@@ -1,0 +1,15 @@
+# If running torrent display as a service, the config.yml file should be owned by root
+# with 600 permissions (see README.md) with the transmission login details filled in.
+
+# Transmission client login details. Can be passed instead as arguments (see docs)
+transmission_user: "user"
+transmission_password: "pass"
+
+# Can be "TORRENTS" or "IMAGE"
+default_display_mode: "TORRENTS"
+
+# Applies chilli fascia to torrent display data. True or False
+chilli_display_mode: False
+
+# Switch on the Flask API to switch modes and upload images. True or False
+enable_api: True

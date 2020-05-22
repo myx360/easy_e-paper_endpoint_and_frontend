@@ -38,10 +38,14 @@ class PlainTorrentImageManager(ImageManager):
     def get_colour_image(self) -> Image:
         return self.__epaper_image.image_colour
 
+    def get_epaper_image(self) -> EpaperImage:
+        return self.__epaper_image
+
     def reset_to_background(self):
         self.__epaper_image = copy.deepcopy(self.__background)
         self.__list_printer = TorrentListImagePaster(self.__epaper_image, self.torrent_list_xy,
-                                                     self.line_width, self.line_height, self.font)
+                                                     self.line_width, self.line_height, self.font,
+                                                     self.font_bold)
 
     def add_torrent(self, text: str, percentage: float = None):
         """ Only adds torrents to the list if there is space on the display.

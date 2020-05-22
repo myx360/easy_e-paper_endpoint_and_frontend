@@ -2,7 +2,7 @@ import subprocess
 import logging
 
 from Definitions import Definitions
-from exceptions.ScriptFailureError import ScriptFailureError
+from custom_errors.ScriptFailureError import ScriptFailureError
 
 
 class Torrent(object):
