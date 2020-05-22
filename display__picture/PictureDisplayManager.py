@@ -50,7 +50,7 @@ class PictureDisplayManager(DisplayManager):
         else:
             logging.error('No picture to display.')
 
-    def new_image_to_display(self):
+    def new_image_to_display(self, force_update: bool):
         with self.__image_lock:
             black_filepath = Definitions.TEMP_IMAGE_BLACK if os.path.isfile(Definitions.TEMP_IMAGE_BLACK) else None
             colour_filepath = Definitions.TEMP_IMAGE_COLOUR if os.path.isfile(Definitions.TEMP_IMAGE_COLOUR) else None
@@ -62,4 +62,4 @@ class PictureDisplayManager(DisplayManager):
                     os.remove(Definitions.TEMP_IMAGE_BLACK)
                 if colour_filepath:
                     os.remove(Definitions.TEMP_IMAGE_COLOUR)
-        return self.__current_image != self.__image_manager.get_epaper_image()
+        return self.__current_image != self.__image_manager.get_epaper_image() or force_update

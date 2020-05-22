@@ -53,13 +53,16 @@ class TestTorrentDisplayManager(unittest.TestCase):
         dm_instance.get_torrents.return_value = self.__TEST_TORRENTS_1
         mock_data_manager.return_value = dm_instance
         class_under_test = TorrentDisplayManager(self.__config)
-        self.assertTrue(class_under_test.new_image_to_display(), 'first dataset should always trigger new_image_to_display')
+        self.assertTrue(class_under_test.new_image_to_display(False), 'first dataset should always trigger new_image_to_display')
 
         dm_instance.get_torrents.return_value = self.__TEST_TORRENTS_2
-        self.assertTrue(class_under_test.new_image_to_display(), 'new dataset should trigger new_image_to_display')
+        self.assertTrue(class_under_test.new_image_to_display(False), 'new dataset should trigger new_image_to_display')
 
         dm_instance.get_torrents.return_value = self.__TEST_TORRENTS_2
-        self.assertFalse(class_under_test.new_image_to_display(), 'same dataset should not trigger new_image_to_display')
+        self.assertFalse(class_under_test.new_image_to_display(False), 'same dataset should not trigger new_image_to_display')
+
+        dm_instance.get_torrents.return_value = self.__TEST_TORRENTS_2
+        self.assertTrue(class_under_test.new_image_to_display(True), 'force flag should trigger return True')
 
     @patch('display__torrents.TorrentDisplayManager.ChilliGardenImageManager', autospec=True)
     def test_update_display(self, mock_image_manager):

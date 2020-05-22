@@ -1,5 +1,6 @@
 import logging
 import sys
+import time
 from threading import Lock
 
 from Configuration import Configuration, ConfigKeys
@@ -17,6 +18,7 @@ class TorrentDisplayManager(DisplayManager):
         self.__torrents = Torrents()
         self.config = config
         self.switch_manager_flag = False
+        self.last_update_time = 0
 
         username, password = self.__get_user_and_pass()
         self.__ready = username and password
@@ -76,12 +78,17 @@ class TorrentDisplayManager(DisplayManager):
                     image_manager.add_torrent(torrent.name, float(torrent.percent.rstrip('%')))
 
             epd.safe_display(image_manager.generate_display_image())
+            self.last_update_time = time.time()
 
-    def new_image_to_display(self) -> bool:
+    def new_image_to_display(self, force_update: bool) -> bool:
         logging.debug('Attempting to fetch torrents...')
-        latest_torrents = self.__torrent_data_manager.get_torrents()
-        requires_refresh = self.__torrents != latest_torrents
-        if requires_refresh:
-            logging.debug('Updating torrents image')
-            self.__torrents = latest_torrents
-        return requires_refresh or self.switch_manager_flag
+        requires_refresh = False
+        current_time = time.time()
+
+        if force_update or (current_time - self.last_update_time > 60):
+            latest_torrents = self.__torrent_data_manager.get_torrents()
+            requires_refresh = self.__torrents != latest_torrents
+            if requires_refresh:
+                logging.debug('Updating torrents image')
+                self.__torrents = latest_torrents
+        return requires_refresh or self.switch_manager_flag or force_update

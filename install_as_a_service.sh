@@ -16,22 +16,8 @@ PYTHON3_HOME=$(which python3)
 [[ -z "$PWD" ]] && echo "Could not find current working directory, service not installed"
 CONFIG_PATH="${PWD}/config.yml"
 
-touch ${PWD}/config.yml
 chown root "${CONFIG_PATH}"
 chmod 600 "${CONFIG_PATH}"
-
-echo "
-In order to access your torrents list, this script will need access to the transmission CLI tool, which requires \
-the transmission username and password. This will be stored (in plaintext) in: ${CONFIG_PATH}"
-
-echo -n "username:"
-read transmission_username
-echo -n "password:"
-read -s transmission_password
-
-echo "username: ${transmission_username}
-password: ${transmission_password}
-" > "${CONFIG_PATH}"
 
 echo "[Unit]
 Description=Transmission Torrent E-paper Display

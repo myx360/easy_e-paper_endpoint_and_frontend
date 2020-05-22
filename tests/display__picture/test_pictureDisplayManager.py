@@ -91,7 +91,7 @@ class TestPictureDisplayManager(unittest.TestCase):
         Definitions.TEMP_IMAGE_BLACK = self.BLACK_TEST_PNG
         Definitions.TEMP_IMAGE_COLOUR = self.COLOUR_TEST_PNG
 
-        self.assertTrue(class_under_test.new_image_to_display())
+        self.assertTrue(class_under_test.new_image_to_display(False))
 
         mock_im_instance.assert_has_calls([call.reset_to_background(),
                                            call.generate_display_image(Definitions.TEMP_IMAGE_BLACK, Definitions.TEMP_IMAGE_COLOUR),
@@ -122,7 +122,38 @@ class TestPictureDisplayManager(unittest.TestCase):
         Definitions.TEMP_IMAGE_COLOUR = self.COLOUR_TEST_PNG
 
         class_under_test._PictureDisplayManager__current_image = test_epaper_image
-        self.assertFalse(class_under_test.new_image_to_display())
+        self.assertFalse(class_under_test.new_image_to_display(False))
+
+        mock_im_instance.assert_has_calls([call.reset_to_background(),
+                                           call.generate_display_image(Definitions.TEMP_IMAGE_BLACK, Definitions.TEMP_IMAGE_COLOUR),
+                                           call.get_epaper_image()])
+
+        self.assertFalse(os.path.isfile(Definitions.TEMP_IMAGE_BLACK))
+        self.assertFalse(os.path.isfile(Definitions.TEMP_IMAGE_COLOUR))
+
+    @patch('display__picture.PictureDisplayManager.PictureImageManager', autospec=True)
+    def test_new_image_to_display_identical_to_current_with_force_flag(self, mock_image_manager):
+        Definitions.TEMP_IMAGE_BLACK = self.TEST_IMAGE_DOES_NOT_EXIST
+        Definitions.TEMP_IMAGE_COLOUR = self.TEST_IMAGE_DOES_NOT_EXIST
+
+        copyfile(Definitions.PC33_BLACK_FILEPATH, self.BLACK_TEST_PNG)
+        copyfile(Definitions.PC33_COLOUR_FILEPATH, self.COLOUR_TEST_PNG)
+
+        mock_im_instance = MagicMock()
+        mock_image_manager.return_value = mock_im_instance
+
+        test_epaper_image = EpaperImage(MagicMock(), MagicMock())
+        mock_im_instance.generate_display_image.return_value = test_epaper_image
+        mock_im_instance.get_epaper_image.return_value = test_epaper_image
+
+        image_lock = Lock()
+        class_under_test = PictureDisplayManager(image_lock)
+
+        Definitions.TEMP_IMAGE_BLACK = self.BLACK_TEST_PNG
+        Definitions.TEMP_IMAGE_COLOUR = self.COLOUR_TEST_PNG
+
+        class_under_test._PictureDisplayManager__current_image = test_epaper_image
+        self.assertTrue(class_under_test.new_image_to_display(True))
 
         mock_im_instance.assert_has_calls([call.reset_to_background(),
                                            call.generate_display_image(Definitions.TEMP_IMAGE_BLACK, Definitions.TEMP_IMAGE_COLOUR),

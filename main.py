@@ -23,7 +23,6 @@ class Main(object):
     def __init__(self, dm_holder: DisplayManagerSwitcher):
         self.__epd = EpaperDisplay()
         self.__dm_holder = dm_holder
-        self.last_image_displayed = None
 
     def display_loop(self):
         epd = self.__epd
@@ -33,12 +32,9 @@ class Main(object):
                 switching_manager = self.__dm_holder.has_mode_proposal()
                 display_manager = dm_switcher.pick_writing_manager()
 
-                if switching_manager:
-                    display_manager.new_image_to_display()
+                if display_manager.new_image_to_display(switching_manager):
                     display_manager.update_display(epd)
-                elif display_manager.new_image_to_display():
-                    self.last_image_displayed = display_manager.update_display(epd)
-                time.sleep(10)
+                time.sleep(2)
 
             except KeyboardInterrupt:
                 logging.info('ctrl + c:')

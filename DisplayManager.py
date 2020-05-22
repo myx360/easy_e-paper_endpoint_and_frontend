@@ -33,7 +33,7 @@ class DisplayManager(object, metaclass=abc.ABCMeta):
         """Updates the display on the epaper"""
 
     @abc.abstractmethod
-    def new_image_to_display(self) -> bool:
+    def new_image_to_display(self, force_update: bool) -> bool:
         """Returns True if there is a new image to display"""
 
 
