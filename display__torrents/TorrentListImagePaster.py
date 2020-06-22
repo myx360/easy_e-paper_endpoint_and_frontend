@@ -8,7 +8,7 @@ from utils.TextWrapper import TextWrapper
 
 
 class TorrentList(object):
-    def __init__(self, max_size: int):
+    def __init__(self, max_size):
         self.max_size = max_size
         self.height = 0
         self.size = (max_size[0], self.height)

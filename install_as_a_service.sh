@@ -4,9 +4,12 @@
 
 echo "
 
-Installs epaper display as a persistant systemd service using the current directory as a the run path. Requires root user to run.
-To change the runpath for the service, disable the service, move the project directory, then re-run this script.
-To completely remove the service, delete the file /lib/systemd/system/epaper_display.service.
+Installs epaper display as a persistant systemd service using the current directory as the run-path.
+To change the run-path for the service, disable the service, move the project directory, then re-run this script.
+To remove the service, delete the file /lib/systemd/system/epaper_display.service and then run:
+
+
+    sudo systemctl daemon-reload
 
 Attempting install...."
 
