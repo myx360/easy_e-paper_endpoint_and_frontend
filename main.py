@@ -6,7 +6,7 @@ import traceback
 import time
 
 from PIL import Image
-from flask import Flask, request
+from flask import Flask, request, render_template
 from threading import Lock
 
 from werkzeug.exceptions import BadRequestKeyError
@@ -90,7 +90,7 @@ def propose_image(image_black=None, image_colour=None):
         logging.error('Could not write image to the upload folder')
 
 
-@app.route('/display_image', methods=['POST'])
+@app.route('/api/picture/display_image', methods=['POST'])
 def display_image():
     try:
         if request.files:
@@ -119,7 +119,7 @@ def display_image():
     return 'Bad request', 400
 
 
-@app.route('/torrents', methods=['POST'])
+@app.route('/api/torrents', methods=['POST'])
 def display_torrents():
     if request.args.get('chilli') is not None:
         dm_switcher.get_manager(DisplayMode.TORRENTS).set_image_manager(request.args.get('chilli') == 'True')
@@ -128,6 +128,11 @@ def display_torrents():
         return 'ACCEPTED', 202
     except KeyError:
         return 'DISPLAY MODE UNAVAILABLE', 500
+
+
+@app.route("/")
+def my_index():
+    return render_template("index.html")
 
 
 if __name__ == '__main__':

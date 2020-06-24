@@ -3,3 +3,4 @@
 .idea
 config.yml
 *.pyc
+**/node_modules
