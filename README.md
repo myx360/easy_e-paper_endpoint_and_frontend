@@ -33,30 +33,36 @@ https://pimylifeup.com/raspberry-pi-transmission/
 3. Enable SPI interface by entering
     ```bash
     sudo raspi-config
-then navigating through Interfacing Options -> SPI interface -> enable. 
+    ```
+    then navigating through Interfacing Options -> SPI interface -> enable.
 4. Clone this repo
     ```bash
     git clone https://github.com/myx360/torrent_box_epaper_display.git
+    ```
 5. Go to the within the project directory and configure the config.yml file using your favourite terminal editor
     ```bash
     cd torrent_box_epaper_display
     sudo chmod 600 config.yml
     vi config.yml
+    ```
 6. If you wish to use the API then you will need to open up the port to do so, do the following:
     ```bash
     sudo ufw allow in 5001
+    ```
 7. At this point, if you would just like to test the display, trying running the following with
 your username and password for the transmission client. Remember to stop it before the next step.
 (you can close the program using ctrl + c)
     ```bash
     python3 main.py username password
+    ```
 8. If you would like to run the torrent display as a service run the install_as_a_service.sh script. This only works with systemd.
     ```bash
     sudo ./install_as_a_service.sh
     sudo systemctl enable epaper_display
+    ```
 
 ## Disclaimer:
-Running as a service requires storing your username and password to the transmission daemon in a config file,
+Using the torrent display as a service requires storing your transmission torrent client username/password in a config file,
 config.yml in order to use those details when polling the transmission daemon. This file should be left only readable by
 root, and obviously will be readable by the root user no matter what, so don't re-use this password. I accept no
 responsibility for any risks caused by or associated with this. Some encryption may come in a future release, but even
