@@ -24,7 +24,6 @@ class PictureDisplayManager(DisplayManager):
 
     @staticmethod
     def get_mode():
-        logging.info('Proposed display mode: %s', DisplayMode.IMAGE.name)
         return DisplayMode.IMAGE
 
     @staticmethod
